@@ -45,9 +45,6 @@ func CreateCert(certPath string, certName string, CApath string, CAname string, 
 		SubjectKeyId: []byte{1, 2, 3, 4, 6},
 		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:     x509.KeyUsageDigitalSignature,
-		DNSNames: []string{
-			"test.com",
-		},
 	}
 	priv, _ := rsa.GenerateKey(rand.Reader, 2048)
 	pub := &priv.PublicKey

@@ -46,7 +46,7 @@ func main() {
 	}
 
 	if genCert || genAll {
-		v1.CreateCert(certPath, hostname, caPath, caName, sub)
+		v1.CreateCert(certPath, "hostcert", caPath, caName, sub)
 	}
 
 }
