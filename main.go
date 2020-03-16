@@ -41,6 +41,10 @@ func main() {
 		CommonName:   hostname,
 	}
 
+	if genCA || genCert {
+		genAll = false
+	}
+
 	if genCA || genAll {
 		v1.CreateCA(caPath, caName, sub)
 	}
