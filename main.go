@@ -13,6 +13,7 @@ var (
 	genAll  bool
 
 	hostname string
+	certName string
 	caName   string
 	caPath   string
 	certPath string
@@ -24,6 +25,7 @@ func init() {
 	flag.BoolVar(&genAll, "generate-all", true, "Generate both CA and host certs")
 
 	flag.StringVar(&hostname, "hostname", "localhost", "Hostname to be on cert CN")
+	flag.StringVar(&certName, "cert-name", "hostcert", "certificates filename")
 	flag.StringVar(&caName, "ca-name", "myCa", "CA filename")
 	flag.StringVar(&caPath, "ca-path", "/tmp", "Folder were CA certificates will be created")
 	flag.StringVar(&certPath, "cert-path", "/tmp", "Folder were host certificates will be created")
@@ -41,16 +43,23 @@ func main() {
 		CommonName:   hostname,
 	}
 
+	subCA := pkix.Name{
+		Organization: []string{"DODAS"},
+		Country:      []string{"IT"},
+	}
+
 	if genCA || genCert {
 		genAll = false
 	}
 
+	//fmt.Println(genCert)
+
 	if genCA || genAll {
-		v1.CreateCA(caPath, caName, sub)
+		v1.CreateCA(caPath, caName, subCA)
 	}
 
 	if genCert || genAll {
-		v1.CreateCert(certPath, "hostcert", caPath, caName, sub)
+		v1.CreateCert(certPath, certName, caPath, caName, sub, hostname)
 	}
 
 }

@@ -9,6 +9,7 @@ import (
 	"encoding/pem"
 	"log"
 	"math/big"
+	"net"
 	"os"
 	"time"
 )
@@ -23,7 +24,7 @@ import (
 // }
 
 // CreateCert ...
-func CreateCert(certPath string, certName string, CApath string, CAname string, subject pkix.Name) {
+func CreateCert(certPath string, certName string, CApath string, CAname string, subject pkix.Name, hostname string) {
 
 	// TODO: check if extension is already passed to the function
 	// Load CA
@@ -38,13 +39,16 @@ func CreateCert(certPath string, certName string, CApath string, CAname string, 
 
 	// Prepare certificate
 	cert := &x509.Certificate{
-		SerialNumber: big.NewInt(1658),
-		Subject:      subject,
-		NotBefore:    time.Now(),
-		NotAfter:     time.Now().AddDate(10, 0, 0),
-		SubjectKeyId: []byte{1, 2, 3, 4, 6},
-		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:     x509.KeyUsageDigitalSignature,
+		SerialNumber:          big.NewInt(1658),
+		Subject:               subject,
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(10, 0, 0),
+		SubjectKeyId:          []byte{1, 2, 3, 4, 6},
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		DNSNames:              []string{hostname},
+		IPAddresses:           []net.IP{net.ParseIP(hostname)},
+		BasicConstraintsValid: true,
 	}
 	priv, _ := rsa.GenerateKey(rand.Reader, 2048)
 	pub := &priv.PublicKey
